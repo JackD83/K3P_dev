@@ -1,0 +1,1 @@
+./configure --host=mipsel-linux-uclibc --disable-interprocess-agent --build=x86_64-unknown-linux-gnu --enable-static=yes --disable-libcc1 --disable-werror --with-build-sysroot=/dingux/mipsel-linux-uclibc/
