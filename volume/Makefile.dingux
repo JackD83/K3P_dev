@@ -1,12 +1,9 @@
-TOOLCHAINDIR :=~/gh_retrogame_toolchain/mipsel-linux-gcc/usr
-BINPATH    := $(TOOLCHAINDIR)/bin
-LIBPATH    := $(TOOLCHAINDIR)/lib
-INCLUDEPATH :=  /home/jack/gh_retrogame_toolchain/mipsel-linux-gcc/usr/mipsel-buildroot-linux-uclibc/sysroot/usr/include
+INCLUDEPATH :=  /home/jack/buildroot-2017.02.9/output/host/usr/mipsel-buildroot-linux-uclibc/sysroot/usr/include/
 INCLUDES := -I$(INCLUDEPATH) -I$(INCLUDEPATH)/SDL
 
-ARCH	:= mipsel-buildroot-linux-uclibc-
-CC		:= ${BINPATH}/$(ARCH)gcc
-CXX = ${BINPATH}/$(ARCH)g++
+ARCH	:= mipsel-linux-
+CC		:= $(ARCH)gcc
+CXX = $(ARCH)g++
 CFLAGS  := -O2 -Wall $(INCLUDES) 
 LDFLAGS := -O2 -Wall -lSDL_gfx -lSDL_image
 CXXFLAGS += $(CFLAGS)

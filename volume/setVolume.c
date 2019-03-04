@@ -8,6 +8,7 @@
 #include <linux/soundcard.h>
 
 #define MIXER_DEVICE "/dev/mixer"
+#define CFG "/opt/volume/volume.cfg"
 
 int mixer = -1;
 
@@ -59,12 +60,16 @@ int getVolume()
   return outvol & 0xff;
 }
 
-void setDmenuVol(int vol)
+void writeCfg(int vol)
 {
+  FILE *fp; 
+  fp=fopen(CFG, "w");
 
-  char cmd[128];
-  sprintf(cmd, "sed -i 's/SndVol =.*/SndVol = %i/g' /opt/volume/volume.cfg", vol);
-  system(cmd);
+  if(fp == NULL)
+    return;
+  
+  fprintf(fp, "%d\n", vol);
+  fclose(fp);  
 }
 
 void increaseVol()
@@ -77,7 +82,7 @@ void increaseVol()
     vol = 100;
   }
 
-  setDmenuVol(vol);
+  writeCfg(vol);
   setVolume(vol);
 }
 
@@ -90,8 +95,22 @@ void decreaseVol()
     vol = 0;
   }
 
-  setDmenuVol(vol);
+  writeCfg(vol);
   setVolume(vol);
+}
+
+
+void loadCfgVolume() 
+{
+  FILE* file = fopen (CFG, "r");
+  if(file == NULL)
+    return;
+
+  int vol = 0;
+  fscanf (file, "%d", &vol);
+  printf("Loading volume from cfg: %d\n", vol); 
+  setVolume(vol);
+  fclose (file); 
 }
 
 int main(int argc, char* argv[])
@@ -115,9 +134,11 @@ int main(int argc, char* argv[])
     }
 
     setVolume(vol);
-    setDmenuVol(vol);
+    writeCfg(vol);
     exit(0);
   }
+
+  loadCfgVolume();
 
   char devname[] = "/dev/event0";
   int device = open(devname, O_RDONLY);
@@ -141,7 +162,7 @@ int main(int argc, char* argv[])
       }
 
       int vol = getVolume();
-      printf("Key: %i State: %i volume is %d\n", ev.code, ev.value, vol);
+      //printf("Key: %i State: %i volume is %d\n", ev.code, ev.value, vol);
     }
   }
   close(mixer);
